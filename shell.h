@@ -18,6 +18,13 @@
 
 extern char **environ;
 
+/**
+ * struct _commands_ - is a linked list of commands
+ * @command: a command
+ * @next: is the next node
+ * Description: linked list for commands
+ */
+
 typedef struct _commands_
 {
 	/*a command and its arguments*/
@@ -25,6 +32,25 @@ typedef struct _commands_
 	struct _commands_ *next;
 
 } list;
+
+/**
+ * struct all_arguments - structure contain all variables
+ * @commands: linked list of commands
+ * @tmp: var to hold the head of the linked list
+ * @av: argument of the main function
+ * @envrion_cpy: copy from the environment variables
+ * @shell_name: name of the shell
+ * @path: path of the command
+ * @line: the line input
+ * @prompt: name to display on the termainl
+ * @operator: to store type of logical operator
+ * @was_operator: to check if there was an operator
+ * @status: status of the execution of commands
+ * @line_number: the nubmer of the current command
+ * @fd: file descriptor
+ *
+ * Description: All variables needed in the shell
+ */
 
 typedef struct all_arguments
 {
@@ -43,9 +69,14 @@ typedef struct all_arguments
 	int fd;
 } ALL;
 
+/**
+ * struct built_in_table - table of built-in commands
+ * @name: name of the builtin command
+ * @function: approprotiate function
+ * Description: used to check if the command is built-in
+ */
 typedef struct built_in_table
 {
-
 	char *name;
 	void (*function)(ALL *);
 } built_in;
@@ -76,7 +107,6 @@ char *_strncat(char *dest, char *src, int n);
 char *get_path(const char *name, ALL *args);
 void fork_command(ALL *args);
 list *make_commands(list **commands, char *line);
-int is_logical(char *cmd);
 
 /*Memory Functions*/
 void free_2D(char **array);
@@ -86,13 +116,16 @@ void *_realloc(void *buffer, unsigned int old_siz, unsigned int new_siz);
 void free_list(list *head);
 
 /*Tools*/
-int _atoi_(char *str); /*convert string to number*/
-char *_itoa(int num);  /*convert number to string*/
+int _atoi_(char *str);
+char *_itoa(int num);
 void remove_comments(ALL *args);
 char *get_var_name(char *str, int idx);
 int is_invalid(char c);
 void variable_replacement(ALL *args);
 char *replace_var(char *str, char *value, int idx);
+int is_logical(char *cmd);
+void handle_operator(ALL *args);
+void handle_operator_status(ALL *args);
 
 /*writing functions*/
 int _putchar(char c);

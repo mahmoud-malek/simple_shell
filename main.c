@@ -1,5 +1,12 @@
 #include "shell.h"
 
+/**
+ * get_path - gets the absolute path of a command
+ * @name: name of the command
+ * @args: structure contain all required arguments
+ * Return: path if found, null otherwise
+ */
+
 char *get_path(const char *name, ALL *args)
 {
 	int i = 0;
@@ -43,6 +50,15 @@ char *get_path(const char *name, ALL *args)
 	return (NULL);
 }
 
+/**
+ * fork_command - make a clone to execute command
+ *
+ * @args: structure for all required arguments
+ *
+ * Description: execute the command and return nothing
+ * or exit failur when can't fork
+ */
+
 void fork_command(ALL *args)
 {
 
@@ -68,6 +84,13 @@ void fork_command(ALL *args)
 	free(args->path);
 }
 
+/**
+ * make_commands - build linked list of commands
+ * @commands: head of linkd list to store
+ * @line: the line of input
+ * Return: list of commands or null otherwise
+ */
+
 list *make_commands(list **commands, char *line)
 {
 	char **cmds = NULL;
@@ -85,7 +108,7 @@ list *make_commands(list **commands, char *line)
 		{
 			free_list(*commands);
 			free_2D(cmds);
-			return NULL;
+			return (NULL);
 		}
 		if (add_node(commands, comand) == NULL)
 		{
@@ -102,10 +125,11 @@ list *make_commands(list **commands, char *line)
 	return (*commands);
 }
 
-int is_logical(char *cmd)
-{
-	return (!_strcmp(cmd, "&&") || !_strcmp(cmd, "||") || !_strcmp(cmd, ";"));
-}
+/**
+ * execute - execute the commnads
+ * @args: structure contain all required arguments
+ * Return: execute the command the return nothing
+ */
 
 void execute(ALL *args)
 {
@@ -121,20 +145,11 @@ void execute(ALL *args)
 	while (args->commands != NULL)
 	{
 		if (is_logical(args->commands->command[0]))
-		{
-			args->was_operator = 1;
-			args->operator= args->commands->command[0];
-			args->commands = args->commands->next;
-		}
-		else if (args->was_operator)
-		{
-			if (_strcmp(args->operator, "&&") == 0 && args->status != 0)
-				args->commands = args->commands->next;
-			else if (_strcmp(args->operator, "||") == 0 && args->status == 0)
-				args->commands = args->commands->next;
+			handle_operator(args);
 
-			args->was_operator = 0;
-		}
+		else if (args->was_operator)
+			handle_operator_status(args);
+
 		else
 		{
 			builtin_function = is_built_in(args);
@@ -151,122 +166,18 @@ void execute(ALL *args)
 			args->commands = args->commands->next;
 		}
 	}
+
 	free_list(args->tmp);
 	free(args->line);
 }
 
-char *replace_var(char *str, char *value, int idx)
-{
-	char *new_str = NULL, *tmp = NULL;
-	int len = 0, value_len = 0, i = 0, j = 0;
-	int var_len = 0;
+/**
+ * main - Enter point of the shell
+ * @ac: number of args
+ * @av: files or arguments
+ * Return: status of executed command
+ */
 
-	tmp = get_var_name(str, idx);
-	value_len = _strlen(value);
-	/*+ 1 for $*/
-	var_len = _strlen(tmp);
-	free(tmp);
-
-	len = _strlen(str) - var_len + value_len;
-
-	new_str = malloc((len + 1) * sizeof(char));
-	if (!new_str)
-		return (NULL);
-
-	for (i = 0; i < idx; i++)
-		new_str[i] = str[i];
-
-	for (j = 0; j < value_len; j++)
-		new_str[i + j] = value[j];
-
-	for (; str[i + var_len] != '\0'; i++)
-		new_str[i + value_len] = str[i + var_len];
-	new_str[len] = '\0';
-
-	free(str);
-	return (new_str);
-}
-int is_invalid(char c)
-{
-	if (c == ' ' || c == '/' || c == ':' || c == '.' || c == '\0')
-		return (1);
-	return (0);
-}
-
-char *get_var_name(char *str, int idx)
-{
-	char *var_name = NULL;
-	int len = 0, i = 0;
-
-	for (i = idx; str[i] != '\0' && !is_invalid(str[i]); i++)
-		len++;
-
-	var_name = malloc((len + 1) * sizeof(char));
-	if (!var_name)
-		return NULL;
-
-	for (i = 0; i < len; i++)
-		var_name[i] = str[idx + i];
-	var_name[len] = '\0';
-
-	return (var_name);
-}
-
-void variable_replacement(ALL *args)
-{
-	list *tmp = args->commands;
-	int i = 0, j = 0;
-	char *var = NULL, *value = NULL;
-
-	while (tmp != NULL && tmp->command != NULL)
-	{
-		for (i = 0; tmp->command[i] != NULL; i++)
-		{
-			for (j = 0; tmp->command[i][j] != '\0'; j++)
-			{
-
-				if (tmp->command[i][j] == '$')
-				{
-					j++;
-					if (tmp->command[i][j] != '\0')
-					{
-
-						if (tmp->command[i][j] == '?')
-						{
-							value = _itoa(args->status);
-
-							tmp->command[i] = replace_var(tmp->command[i], value, j - 1);
-							free(value);
-						}
-
-						else if (tmp->command[i][j] == '$')
-						{
-							value = _itoa(getpid());
-							tmp->command[i] = replace_var(tmp->command[i], value, j - 1);
-							free(value);
-						}
-
-						else if (tmp->command[i][j] != '\0')
-						{
-							var = get_var_name(tmp->command[i], j);
-							value = _getenv(var, args);
-							if (value != NULL)
-								tmp->command[i] = replace_var(tmp->command[i], value, j - 1);
-							else
-							{
-								free(tmp->command[i]);
-								tmp->command[i] = NULL;
-							}
-							free(var);
-						}
-					}
-					break;
-				}
-			}
-		}
-		tmp = tmp->next;
-	}
-}
 int main(int ac, char **av)
 {
 	ssize_t read_chars = 0;
