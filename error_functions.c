@@ -51,3 +51,23 @@ void print_exit_error(ALL *args)
 	if (line_num != NULL)
 		free(line_num);
 }
+
+void print_error_cd(ALL *args)
+{
+	char *line_num = NULL;
+
+	line_num = _itoa(args->line_number);
+	eputs(args->shell_name);
+	eputs(": ");
+	eputs(line_num);
+	eputs(": ");
+	eputs(args->commands->command[0]);
+	eputs(": ");
+	eputs("can't cd to ");
+	eputs(args->commands->command[1]);
+	eputchar('\n');
+
+	args->status = ERROR_NOT_FOUND;
+	if (line_num != NULL)
+		free(line_num);
+}

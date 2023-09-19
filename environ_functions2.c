@@ -59,3 +59,29 @@ void create_env(ALL *args, char *name, char *value, int i)
 	free_2D(args->envrion_cpy);
 	args->envrion_cpy = new_env;
 }
+
+void _setenv(char *name, char *value, ALL *args)
+{
+	char *new_val = NULL;
+	char **env = args->envrion_cpy;
+	int i = 0;
+
+	if (!name || !value)
+	{
+		eputs("ERROR NULL name or value\n");
+		return;
+	}
+
+	for (; env[i] != NULL; i++)
+	{
+		if (compare_env_name(env[i], name))
+		{
+			new_val = create_new_val(name, value);
+			free(env[i]);
+			env[i] = new_val;
+			return;
+		}
+	}
+
+	create_env(args, name, value, i);
+}

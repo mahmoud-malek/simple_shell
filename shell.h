@@ -101,8 +101,10 @@ int _puts(char *str);
 int eputs(char *str);
 void print_error(ALL *args);
 void print_exit_error(ALL *args);
+void print_error_cd(ALL *args);
 
 void builtin_exit(ALL *args);
+void builtin_cd(ALL *args);
 
 void (*is_built_in(ALL *args))(ALL *);
 ssize_t _getline(char **line_ptr, size_t *size, int fd);
@@ -121,5 +123,7 @@ void builtin_setenv(ALL *args);
 void builtin_unsetenv(ALL *args);
 char *create_new_val(char *name, char *value);
 void create_env(ALL *args, char *name, char *value, int i);
+void _setenv(char *name, char *value, ALL *args);
+int compare_env_name(char *str, const char *name);
 
 #endif /*Shell Header*/
