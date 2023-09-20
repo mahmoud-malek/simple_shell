@@ -1,5 +1,11 @@
 #include "shell.h"
 
+/**
+ * add_node - adds node to the list of commands
+ * @head: the first node in the list
+ * @command: command to add
+ * Return: pointer to add node
+ */
 list *add_node(list **head, char **command)
 {
 	list *node = malloc(sizeof(list));
@@ -32,6 +38,11 @@ list *add_node(list **head, char **command)
 	temp->next = node;
 	return (*head);
 }
+
+/**
+ * free_list - frees a linked list of commands
+ * @head: first node to start free from
+ */
 
 void free_list(list *head)
 {

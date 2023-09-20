@@ -1,61 +1,80 @@
 #include "shell.h"
 
+/**
+ * variable_replacement_helper - replaces variables
+ * @args: all arguemnts
+ * @i: the ith command from the command list
+ * @tmp: temporary for the command
+ */
+void variable_replacement_helper(ALL *args, int i, list *tmp)
+{
+	int j = 0;
+	char *var = NULL, *value = NULL;
+
+	for (j = 0; tmp->command[i][j] != '\0'; j++)
+	{
+		if (tmp->command[i][j] == '$')
+		{
+			j++;
+			if (tmp->command[i][j] != '\0')
+			{
+				if (tmp->command[i][j] == '?')
+				{
+					value = _itoa(args->status);
+
+					tmp->command[i] = replace_var(tmp->command[i], value, j - 1);
+					free(value);
+				}
+				else if (tmp->command[i][j] == '$')
+				{
+					value = _itoa(getpid());
+					tmp->command[i] = replace_var(tmp->command[i], value, j - 1);
+					free(value);
+				}
+				else if (tmp->command[i][j] != '\0')
+				{
+					var = get_var_name(tmp->command[i], j);
+					value = _getenv(var, args);
+					if (value != NULL)
+						tmp->command[i] = replace_var(tmp->command[i], value, j - 1);
+					else
+					{
+						free(tmp->command[i]);
+						tmp->command[i] = NULL;
+					}
+					free(var);
+				}
+			}
+			break;
+		}
+	}
+}
+
+/**
+ * variable_replacement - handles replacing envrionment variables
+ * @args: Structure contain all wanted arguments
+ */
+
 void variable_replacement(ALL *args)
 {
 	list *tmp = args->commands;
-	int i = 0, j = 0;
-	char *var = NULL, *value = NULL;
+	int i = 0;
 
 	while (tmp != NULL && tmp->command != NULL)
 	{
 		for (i = 0; tmp->command[i] != NULL; i++)
-		{
-			for (j = 0; tmp->command[i][j] != '\0'; j++)
-			{
+			variable_replacement_helper(args, i, tmp);
 
-				if (tmp->command[i][j] == '$')
-				{
-					j++;
-					if (tmp->command[i][j] != '\0')
-					{
-
-						if (tmp->command[i][j] == '?')
-						{
-							value = _itoa(args->status);
-
-							tmp->command[i] = replace_var(tmp->command[i], value, j - 1);
-							free(value);
-						}
-
-						else if (tmp->command[i][j] == '$')
-						{
-							value = _itoa(getpid());
-							tmp->command[i] = replace_var(tmp->command[i], value, j - 1);
-							free(value);
-						}
-
-						else if (tmp->command[i][j] != '\0')
-						{
-							var = get_var_name(tmp->command[i], j);
-							value = _getenv(var, args);
-							if (value != NULL)
-								tmp->command[i] = replace_var(tmp->command[i], value, j - 1);
-							else
-							{
-								free(tmp->command[i]);
-								tmp->command[i] = NULL;
-							}
-							free(var);
-						}
-					}
-					break;
-				}
-			}
-		}
 		tmp = tmp->next;
 	}
 }
 
+/**
+ * get_var_name - gets variable name from a string
+ * @str: string contain the variable
+ * @idx: index of the beginning of the variable name
+ * Return: allocated variable name or null otherwise
+ */
 char *get_var_name(char *str, int idx)
 {
 	char *var_name = NULL;
@@ -66,7 +85,7 @@ char *get_var_name(char *str, int idx)
 
 	var_name = malloc((len + 1) * sizeof(char));
 	if (!var_name)
-		return NULL;
+		return (NULL);
 
 	for (i = 0; i < len; i++)
 		var_name[i] = str[idx + i];
@@ -75,6 +94,13 @@ char *get_var_name(char *str, int idx)
 	return (var_name);
 }
 
+/**
+ * is_invalid - checks whether a char valid for the
+ * variable name or not
+ * @c: character to check
+ * Return: 1 if invalid, 0 otherwise
+ */
+
 int is_invalid(char c)
 {
 	if (c == ' ' || c == '/' || c == ':' || c == '.' || c == '\0')
@@ -82,6 +108,13 @@ int is_invalid(char c)
 	return (0);
 }
 
+/**
+ * replace_var - replacing a $"variable name"
+ * @str: name of the variable
+ * @value: value of the variable
+ * @idx: index to specifiy where to start repalcing
+ * Return: new_string with replaced variable, or null otherwise
+ */
 char *replace_var(char *str, char *value, int idx)
 {
 	char *new_str = NULL, *tmp = NULL;
@@ -112,9 +145,4 @@ char *replace_var(char *str, char *value, int idx)
 
 	free(str);
 	return (new_str);
-}
-
-int is_logical(char *cmd)
-{
-	return (!_strcmp(cmd, "&&") || !_strcmp(cmd, "||") || !_strcmp(cmd, ";"));
 }
