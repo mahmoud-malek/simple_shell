@@ -48,7 +48,11 @@ char *_strdup(const char *str)
 	result[i] = '\0';
 	return (result);
 }
-
+/**
+ * _strdup2D - duplicates 2D array
+ * @str: string
+ * Return: duplicated array
+ */
 char **_strdup2D(char **str)
 {
 	int len = 0, i = 0;
