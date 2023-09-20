@@ -53,7 +53,13 @@ char *_strcat(char *dest, const char *src)
 
 	return (dest);
 }
-
+/**
+ * _strncat - concatenates n bytes
+ * @dest: destination
+ * @src: source
+ * @n: number of bytes
+ * Return: destination
+ */
 char *_strncat(char *dest, char *src, int n)
 {
 	char *hold = dest + _strlen(dest);
