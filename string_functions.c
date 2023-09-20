@@ -71,7 +71,12 @@ char *_strncat(char *dest, char *src, int n)
 
 	return (dest);
 }
-
+/**
+ * _strcpy - copies a string
+ * @dest: destination
+ * @src: source
+ * Return: destination
+ */
 char *_strcpy(char *dest, char *src)
 {
 	int i = 0;
