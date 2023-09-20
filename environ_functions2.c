@@ -1,5 +1,12 @@
 #include "shell.h"
 
+/**
+ * create_new_val - creates new variable
+ * @name: name of the variable
+ * @value: value of the variable
+ * Return: newly allocated variable or NULL otherwise
+ */
+
 char *create_new_val(char *name, char *value)
 {
 	char *new_val = malloc(_strlen(name) + _strlen(value) + 2);
@@ -16,6 +23,14 @@ char *create_new_val(char *name, char *value)
 
 	return (new_val);
 }
+
+/**
+ * create_env - creates a new environment of variables
+ * @args: contain copy of the environment
+ * @name: name of the new var to add to new envrionment
+ * @value: value of the new variable
+ * @i: length of the old environment
+ */
 
 void create_env(ALL *args, char *name, char *value, int i)
 {
@@ -59,6 +74,13 @@ void create_env(ALL *args, char *name, char *value, int i)
 	free_2D(args->envrion_cpy);
 	args->envrion_cpy = new_env;
 }
+
+/**
+ * _setenv - sets an new variable to the environment list
+ * @name: name of the variable
+ * @value: value of var
+ * @args: have the environment list to add to
+ */
 
 void _setenv(char *name, char *value, ALL *args)
 {

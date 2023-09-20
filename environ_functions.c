@@ -1,5 +1,13 @@
 #include "shell.h"
 
+/**
+ * compare_env_name - compares environment names
+ * @str: string to comare with
+ * @name: name to compare iwth string
+ * Return: index at '=' in string to copy name from
+ * beginning up to this index
+ */
+
 int compare_env_name(char *str, const char *name)
 {
 	int i = 0;
@@ -15,6 +23,14 @@ int compare_env_name(char *str, const char *name)
 		return (i);
 	return (0);
 }
+
+/**
+ * _getenv - gets the envronment value
+ * @name: name of the variable
+ * @args: number of arguments
+ * Return: pointer to first byte of the variable
+ * or NULL otherwise
+ */
 
 char *_getenv(const char *name, ALL *args)
 {
@@ -38,6 +54,11 @@ char *_getenv(const char *name, ALL *args)
 	return (NULL);
 }
 
+/**
+ * builtin_env - prints the environment variables
+ * @args: contain env copy to print
+ */
+
 void builtin_env(ALL *args)
 {
 	char **tmp = args->envrion_cpy;
@@ -52,6 +73,12 @@ void builtin_env(ALL *args)
 		tmp++;
 	}
 }
+
+/**
+ * builtin_setenv - sets a variable to env-vars
+ *
+ * @args: all required arguments to set the env-var
+ */
 
 void builtin_setenv(ALL *args)
 {
@@ -79,6 +106,11 @@ void builtin_setenv(ALL *args)
 
 	create_env(args, name, value, i);
 }
+
+/**
+ * builtin_unsetenv - unset environment variable from the env-list
+ * @args: contain name of the var to unset
+ */
 
 void builtin_unsetenv(ALL *args)
 {
