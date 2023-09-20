@@ -1,5 +1,13 @@
 #include "shell.h"
 
+/**
+ * _atoi_ - converts string to int
+ * @str: string to convert
+ * Description: it doesn't handle negative numbers
+ * becuse i don't need them
+ * Return: converted number or -1 otherwise
+ */
+
 int _atoi_(char *str)
 {
 
@@ -26,6 +34,12 @@ int _atoi_(char *str)
 
 	return (number);
 }
+
+/**
+ * _itoa - converts int to string
+ * @num: number the covert
+ * Return: string number
+ */
 
 char *_itoa(int num)
 {
@@ -57,6 +71,11 @@ char *_itoa(int num)
 	return (res);
 }
 
+/**
+ * remove_comments - removes comments from line of input
+ * @args: all required arguments
+ */
+
 void remove_comments(ALL *args)
 {
 	int quote = 0;
@@ -80,6 +99,11 @@ void remove_comments(ALL *args)
 	}
 }
 
+/**
+ * initialize_arguments - initailizes all variables to defualt values
+ * @args: contain all variables to initialize
+ * @av: main arguments to initialize also
+ */
 void initialize_arguments(ALL *args, char **av)
 {
 	args->av = av;
@@ -95,7 +119,14 @@ void initialize_arguments(ALL *args, char **av)
 	args->was_operator = 0;
 	args->status = EXIT_SUCCESS;
 	args->fd = STDIN_FILENO;
+	args->aliases = NULL;
 }
+
+/**
+ * interactive - checks if input comes from stdin or not
+ * @ac: number of arguments of the main
+ * Return: 1 on success, 0 otherwise
+ */
 
 int interactive(int ac)
 {

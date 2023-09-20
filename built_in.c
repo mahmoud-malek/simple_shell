@@ -1,5 +1,12 @@
 #include "shell.h"
 
+/**
+ * is_built_in - checks if a command is built in
+ * @args: contain built-in structure that contain a command name
+ * and command function
+ * Return: the appropriate function for command
+ */
+
 void (*is_built_in(ALL *args))(ALL *)
 {
 	int i = 0;
@@ -9,6 +16,7 @@ void (*is_built_in(ALL *args))(ALL *)
 		{"setenv", builtin_setenv},
 		{"unsetenv", builtin_unsetenv},
 		{"cd", builtin_cd},
+		{"alias", builtin_alias},
 		{NULL, NULL}};
 
 	for (; programs[i].name != NULL; i++)
@@ -20,6 +28,11 @@ void (*is_built_in(ALL *args))(ALL *)
 	return (NULL);
 }
 
+/**
+ * builtin_exit - exits the shell with or wihtout code
+ * @args: all required information to exit with
+ */
+
 void builtin_exit(ALL *args)
 {
 	int code = 0;
@@ -29,6 +42,7 @@ void builtin_exit(ALL *args)
 		free(args->line);
 		free_list(args->commands);
 		free_2D(args->envrion_cpy);
+		free_aliases_list(args);
 		exit(args->status);
 	}
 	else
@@ -43,38 +57,37 @@ void builtin_exit(ALL *args)
 			free(args->line);
 			free_list(args->commands);
 			free_2D(args->envrion_cpy);
-
+			free_aliases_list(args);
 			exit(code);
 		}
 	}
 }
 
+/**
+ * builtin_cd - changes the current directory to whatever
+ * the user wants to go
+ *
+ * @args: contain arguments to proccess cd
+ */
+
 void builtin_cd(ALL *args)
 {
-	char *home = NULL;
-	char *oldpwd = NULL;
-	char *cwd = NULL;
+	char *home = NULL, *oldpwd = NULL, *cwd = NULL;
 	int status = 0;
 
-	if (!args->commands->command[1] || _strcmp(args->commands->command[1], "") == 0)
+	if (!args->commands->command[1] ||
+		_strcmp(args->commands->command[1], "") == 0)
 	{
 		home = _strdup(_getenv("HOME", args));
 		if (!home)
 			return;
-
+		status = chdir(home);
+		if (status == -1)
+			print_error_cd(args);
 		else
-		{
-			status = chdir(home);
-			if (status == -1)
-				print_error_cd(args);
-			else
-			{
-				_setenv("PWD", home, args);
-			}
-			free(home);
-		}
+			_setenv("PWD", home, args);
+		free(home);
 	}
-
 	else
 	{
 		cwd = getcwd(NULL, 0);
@@ -94,7 +107,6 @@ void builtin_cd(ALL *args)
 				free(cwd);
 				return;
 			}
-
 			else
 			{
 				status = chdir(oldpwd);
@@ -110,7 +122,6 @@ void builtin_cd(ALL *args)
 				free(oldpwd);
 			}
 		}
-
 		else
 		{
 			status = chdir(args->commands->command[1]);
@@ -123,7 +134,6 @@ void builtin_cd(ALL *args)
 			}
 		}
 	}
-
 	if (cwd != NULL)
 		free(cwd);
 }

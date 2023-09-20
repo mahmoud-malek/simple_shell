@@ -19,6 +19,20 @@
 extern char **environ;
 
 /**
+ * struct list_alias - is linked list of aliases
+ * @name: name of the alias
+ * @value: value of the alias
+ * @next: pointer to next node
+ */
+typedef struct list_alias
+{
+	char *name;
+	char *value;
+
+	struct list_alias *next;
+} ALIAS;
+
+/**
  * struct _commands_ - is a linked list of commands
  * @command: a command
  * @next: is the next node
@@ -48,12 +62,13 @@ typedef struct _commands_
  * @status: status of the execution of commands
  * @line_number: the nubmer of the current command
  * @fd: file descriptor
- *
+ * @aliases: linked list of aliases
  * Description: All variables needed in the shell
  */
 
 typedef struct all_arguments
 {
+	ALIAS *aliases;
 	list *commands;
 	list *tmp;
 	char **av;
@@ -118,10 +133,12 @@ void free_list(list *head);
 /*Tools*/
 int _atoi_(char *str);
 char *_itoa(int num);
+void initialize_arguments(ALL *args, char **av);
 void remove_comments(ALL *args);
 char *get_var_name(char *str, int idx);
 int is_invalid(char c);
 void variable_replacement(ALL *args);
+void variable_replacement_helper(ALL *args, int i, list *tmp);
 char *replace_var(char *str, char *value, int idx);
 int is_logical(char *cmd);
 void handle_operator(ALL *args);
@@ -144,8 +161,6 @@ ssize_t _getline(char **line_ptr, size_t *size, int fd);
 
 list *add_node(list **head, char **command);
 
-void initialize_arguments(ALL *args, char **av);
-
 void execute(ALL *args);
 int interactive(int ac);
 
@@ -158,5 +173,13 @@ char *create_new_val(char *name, char *value);
 void create_env(ALL *args, char *name, char *value, int i);
 void _setenv(char *name, char *value, ALL *args);
 int compare_env_name(char *str, const char *name);
+
+/*Aliases functions*/
+void add_alias(ALIAS **head, char *name, char *value);
+void print_alias(ALIAS *head, char *name);
+void print_alias_list(ALL *args);
+void builtin_alias(ALL *args);
+void free_aliases_list(ALL *args);
+void check_alias(ALL *args);
 
 #endif /*Shell Header*/
