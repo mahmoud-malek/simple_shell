@@ -1,5 +1,11 @@
 #include "shell.h"
 
+/**
+ * logical_sep - check if logical(||, &&, ;) exists
+ * @line: to check it
+ * Return: 2 if logical operators, 1 if (;), and 0 otherwise
+ */
+
 int logical_sep(char *line)
 {
 	if ((*line == '|' && *(line + 1) == '|') ||
@@ -11,6 +17,13 @@ int logical_sep(char *line)
 
 	return (0);
 }
+
+/**
+ * count_logical - counts commands seperated by ||, &&, ;
+ * @line: string to count from
+ * Return: number of commands separated by logical operators
+ * or semi-colon
+ */
 
 int count_logical(char *line)
 {
@@ -44,6 +57,13 @@ int count_logical(char *line)
 
 	return (counter);
 }
+
+/**
+ * get_logical - build array of commands
+ * @line: string the build from
+ * @result: two dimensional array to store the result
+ * Return: array of commands
+ */
 
 char **get_logical(char *line, char **result)
 {
@@ -81,6 +101,16 @@ char **get_logical(char *line, char **result)
 	result[i] = NULL;
 	return (result);
 }
+
+/**
+ * get_logical_helper - allocate space for command and copy it
+ * @line: to copy from
+ * @sep_len: length of the sperator, eg.(|| and && is 2, and ; is 1)
+ * @result: the array of commands to store copies in it
+ * @i: index to know where exactly to store the value
+ * Return: 0 on success, and -1 otherwise
+ */
+
 int get_logical_helper(char **line, int *sep_len, char **result, int *i)
 {
 	*sep_len = logical_sep(*line);
@@ -101,6 +131,12 @@ int get_logical_helper(char **line, int *sep_len, char **result, int *i)
 
 	return (0);
 }
+
+/**
+ * split_logical - splits line into commands
+ * @line: string contain text commands to split
+ * Return: array of commands on success, NULL otherwise
+ */
 
 char **split_logical(char *line)
 {

@@ -1,5 +1,12 @@
 #include "shell.h"
 
+/**
+ * is_separator - checks if char is a char separator
+ * @c: char to check
+ * @separator: the separator to check with
+ * Return: 1 if separator, 0 otherwise
+ */
+
 int is_separator(const char c, const char *separator)
 {
 	int len = _strlen(separator);
@@ -11,6 +18,13 @@ int is_separator(const char c, const char *separator)
 
 	return (0);
 }
+
+/**
+ * count_cmd - counts number of arguments in a command
+ * @line: line of command
+ * @separator: separator to count based on it
+ * Return: number of arguments
+ */
 
 int count_cmd(char *line, const char *separator)
 {
@@ -35,6 +49,13 @@ int count_cmd(char *line, const char *separator)
 	return (counter);
 }
 
+/**
+ * get_cmd - get arguemnts from a line or command
+ * @line: line of input
+ * @commands: list to store the arguments in
+ * @separator: seperator of the argument
+ * Return: array of arguments on success, null otherwise
+ */
 char **get_cmd(char *line, char **commands, const char *separator)
 {
 	int ch = 0, cmd_len = 0, j = 0, i = 0;
@@ -74,6 +95,13 @@ char **get_cmd(char *line, char **commands, const char *separator)
 	commands[i] = NULL;
 	return (commands);
 }
+
+/**
+ * split - splits the line into arguemnts
+ * @line: line to split
+ * @separator: to split with
+ * Return: array of result, or null otherwise
+ */
 
 char **split(char *line, const char *separator)
 {
