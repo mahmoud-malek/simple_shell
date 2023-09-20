@@ -16,7 +16,12 @@ size_t _strlen(const char *str)
 
 	return (len);
 }
-
+/**
+ * _strcmp - compares two strings
+ * @str1: first string
+ * @str2: second string
+ * Return: zero on success
+ */
 int _strcmp(char *str1, char *str2)
 {
 	while (*str1 && *str2)
