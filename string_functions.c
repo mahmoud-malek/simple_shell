@@ -1,5 +1,9 @@
 #include "shell.h"
-
+/**
+ * _strlen - get string length
+ * @str: sting
+ * Return: length of string
+ */
 size_t _strlen(const char *str)
 {
 	size_t len = 0;
@@ -44,7 +48,8 @@ char *_strncat(char *dest, char *src, int n)
 {
 	char *hold = dest + _strlen(dest);
 
-	while (n-- && (*hold++ = *src++));
+	while (n-- && (*hold++ = *src++))
+		;
 
 	*hold = '\0';
 
