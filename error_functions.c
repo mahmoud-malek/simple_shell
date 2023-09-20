@@ -1,5 +1,10 @@
 #include "shell.h"
 
+/**
+ * print_error - prints an error message to stderr
+ * @args: contain arguments to specify where error happens
+ */
+
 void print_error(ALL *args)
 {
 	char *line_num = NULL;
@@ -32,6 +37,11 @@ void print_error(ALL *args)
 		free(line_num);
 }
 
+/**
+ * print_exit_error - prints an error for exit command
+ * @args: contain args to determine kind of error
+ */
+
 void print_exit_error(ALL *args)
 {
 	char *line_num = NULL;
@@ -51,6 +61,11 @@ void print_exit_error(ALL *args)
 	if (line_num != NULL)
 		free(line_num);
 }
+
+/**
+ * print_error_cd - print an error for cd command
+ * @args: to specify where and what is the error
+ */
 
 void print_error_cd(ALL *args)
 {
