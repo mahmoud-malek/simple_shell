@@ -38,7 +38,12 @@ int _strcmp(char *str1, char *str2)
 
 	return (0);
 }
-
+/**
+ * _strcat - conctenates two strings
+ * @dest: destination
+ * @src: source
+ * Return: destination string
+ */
 char *_strcat(char *dest, const char *src)
 {
 	char *tmp = dest + _strlen(dest);
