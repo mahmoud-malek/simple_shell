@@ -157,6 +157,7 @@ void execute(ALL *args)
 				builtin_function(args);
 			else if (!is_logical(args->commands->command[0]))
 			{
+				check_alias(args);
 				args->path = get_path(args->commands->command[0], args);
 				if (!args->path)
 					print_error(args);
@@ -212,6 +213,7 @@ int main(int ac, char **av)
 				putchar('\n');
 
 			free_2D(args.envrion_cpy);
+			free_aliases_list(&args);
 			exit(args.status);
 		}
 
@@ -228,6 +230,7 @@ int main(int ac, char **av)
 		execute(&args);
 	}
 
+	free_aliases_list(&args);
 	free_2D(args.envrion_cpy);
 	if (args.fd != STDIN_FILENO)
 		close(args.fd);
