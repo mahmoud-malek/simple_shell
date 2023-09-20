@@ -22,7 +22,11 @@ char *_strncpy(char *dest, char *src, int n)
 
 	return (dest);
 }
-
+/**
+ * _strdup - duplicates a string
+ * @str: string to be duplicated
+ * Return: duplicated string
+ */
 char *_strdup(const char *str)
 {
 	char *result = NULL;
