@@ -1,5 +1,11 @@
 #include "shell.h"
-
+/**
+ * _strncpy - copies n bytes of a string
+ * @dest: destination
+ * @src: source
+ * @n: number of bytes
+ * Return: destination
+ */
 char *_strncpy(char *dest, char *src, int n)
 {
 	char *hold = dest;
