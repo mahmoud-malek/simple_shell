@@ -56,7 +56,7 @@ void print_exit_error(ALL *args)
 	eputs("Illegal number: ");
 	eputs(args->commands->command[1]);
 	eputchar('\n');
-	args->status = 2;
+	args->status = ERROR_EXIT;
 
 	if (line_num != NULL)
 		free(line_num);

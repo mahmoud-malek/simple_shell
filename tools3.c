@@ -7,10 +7,11 @@
 
 void handle_operator(ALL *args)
 {
+
 	/*to indicate there was an operator*/
 	args->was_operator = 1;
 	/*assign the operator for clarity*/
-	args->operator = args->commands->command[0];
+	args->operator= args->commands->command[0];
 	/*skip one command*/
 	args->commands = args->commands->next;
 }
@@ -61,7 +62,8 @@ void check_alias(ALL *args)
 
 		for (i = 0; tmp->command[i] != NULL; i++)
 		{
-			do {
+			do
+			{
 				found = 0;
 				als = args->aliases;
 

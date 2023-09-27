@@ -120,6 +120,8 @@ void initialize_arguments(ALL *args, char **av)
 	args->status = EXIT_SUCCESS;
 	args->fd = STDIN_FILENO;
 	args->aliases = NULL;
+	args->hist = NULL;
+	args->was_command = 0;
 }
 
 /**

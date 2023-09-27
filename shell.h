@@ -10,13 +10,27 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define MAX_INT 2147483647
 #define BUF_SIZE 1024
 #define ERROR_NOT_FOUND 127
+#define ERROR_EXIT 2
 
 extern char **environ;
+
+/**
+ * struct HISTORY - is a linked list of command history
+ * @line: line of input
+ * @next: pointer to next node
+ */
+
+typedef struct HISTORY
+{
+	char *line;
+	struct HISTORY *next;
+} HISTORY;
 
 /**
  * struct list_alias - is linked list of aliases
@@ -63,12 +77,14 @@ typedef struct _commands_
  * @line_number: the nubmer of the current command
  * @fd: file descriptor
  * @aliases: linked list of aliases
+ * @hist: is likned list of input history
  * Description: All variables needed in the shell
  */
 
 typedef struct all_arguments
 {
 	ALIAS *aliases;
+	HISTORY *hist;
 	list *commands;
 	list *tmp;
 	char **av;
@@ -79,6 +95,7 @@ typedef struct all_arguments
 	char *prompt;
 	char *operator;
 	int was_operator;
+	int was_command;
 	int status;
 	int line_number;
 	int fd;
@@ -120,7 +137,7 @@ char *_strncat(char *dest, char *src, int n);
 
 /*Path finder Functions*/
 char *get_path(const char *name, ALL *args);
-void fork_command(ALL *args);
+void fork_command(ALL *args, int *pipe_in, int *pipe_out);
 list *make_commands(list **commands, char *line);
 
 /*Memory Functions*/
@@ -181,5 +198,15 @@ void print_alias_list(ALL *args);
 void builtin_alias(ALL *args);
 void free_aliases_list(ALL *args);
 void check_alias(ALL *args);
+
+/*Handle signals*/
+void sigint_handler(int singal);
+
+/*History functions*/
+void print_history(HISTORY *head);
+void add_history(HISTORY **head, char *line);
+void builtin_history(ALL *args);
+void free_history(ALL *args);
+void delete_history(HISTORY **head, int index);
 
 #endif /*Shell Header*/
