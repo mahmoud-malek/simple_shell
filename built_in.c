@@ -17,6 +17,7 @@ void (*is_built_in(ALL *args))(ALL *)
 		{"unsetenv", builtin_unsetenv},
 		{"cd", builtin_cd},
 		{"alias", builtin_alias},
+		{"history", builtin_history},
 		{NULL, NULL}};
 
 	for (; programs[i].name != NULL; i++)
@@ -43,6 +44,7 @@ void builtin_exit(ALL *args)
 		free_list(args->commands);
 		free_2D(args->envrion_cpy);
 		free_aliases_list(args);
+		free_history(args);
 		exit(args->status);
 	}
 	else
@@ -58,6 +60,7 @@ void builtin_exit(ALL *args)
 			free_list(args->commands);
 			free_2D(args->envrion_cpy);
 			free_aliases_list(args);
+			free_history(args);
 			exit(code);
 		}
 	}

@@ -59,24 +59,43 @@ char *get_path(const char *name, ALL *args)
  * or exit failur when can't fork
  */
 
-void fork_command(ALL *args)
+void fork_command(ALL *args, int *pipe_in, int *pipe_out)
 {
-
 	pid_t child = 0;
 
 	child = fork();
 	if (child == -1)
 	{
-		perror("fork faild");
+		perror("fork failed");
 		exit(EXIT_FAILURE);
 	}
 	else if (child == 0)
 	{
+		if (pipe_in)
+		{
+			dup2(pipe_in[0], STDIN_FILENO);
+			if (pipe_in[1] != -1)
+				close(pipe_in[1]);
+		}
+		if (pipe_out)
+		{
+			dup2(pipe_out[1], STDOUT_FILENO);
+			if (pipe_out[0] != -1)
+				close(pipe_out[0]);
+		}
+
 		if (execve(args->path, args->commands->command, args->envrion_cpy) == -1)
+		{
 			print_error(args);
+		}
 	}
 	else
 	{
+		if (pipe_in)
+			close(pipe_in[0]);
+		if (pipe_out)
+			close(pipe_out[1]);
+
 		waitpid(child, &args->status, WUNTRACED);
 		args->status = WEXITSTATUS(args->status);
 	}
@@ -125,6 +144,44 @@ list *make_commands(list **commands, char *line)
 	return (*commands);
 }
 
+int is_redirection(char *cmd)
+{
+	if (!_strcmp(cmd, "<"))
+		return (1);
+	if (!_strcmp(cmd, ">"))
+		return (2);
+	if (!_strcmp(cmd, ">>"))
+		return (3);
+	if (!_strcmp(cmd, "2>"))
+		return (4);
+	if (!_strcmp(cmd, "2>>"))
+		return (5);
+	if (!_strcmp(cmd, "&>"))
+		return (6);
+	if (!_strcmp(cmd, "2>&1"))
+		return (7);
+
+	return (0);
+}
+int open_file(int type, const char *name)
+{
+	int fd = -1;
+
+	if (type == 1)
+		fd = open(name, O_RDONLY);
+
+	if (type == 2 || type == 4)
+		fd = open(name, O_WRONLY | O_CREAT | O_TRUNC, 0766);
+
+	if (type == 3 || type == 5)
+		fd = open(name, O_WRONLY | O_CREAT | O_APPEND, 0766);
+
+	if (type == 6 || type == 7)
+		fd = open(name, O_WRONLY | O_CREAT | O_APPEND, 0766);
+
+	return (fd);
+}
+
 /**
  * execute - execute the commnads
  * @args: structure contain all required arguments
@@ -134,6 +191,9 @@ list *make_commands(list **commands, char *line)
 void execute(ALL *args)
 {
 	void (*builtin_function)(ALL *) = NULL;
+	int pipe_fd[2], prev_fd[2] = {-1, -1}, r_fd[2] = {-1, -1};
+	list *next = NULL;
+	int found_pipe = 0, redirction = 0;
 
 	if (args->commands == NULL)
 	{
@@ -141,20 +201,110 @@ void execute(ALL *args)
 		return;
 	}
 
+	if (_strcmp(args->commands->command[0], "history") != 0)
+		add_history(&args->hist, args->line);
+
 	args->tmp = args->commands;
 	while (args->commands != NULL)
 	{
+		next = args->commands->next;
+
+		if (next)
+			redirction = is_redirection(next->command[0]);
+
 		if (is_logical(args->commands->command[0]))
 			handle_operator(args);
 
 		else if (args->was_operator)
 			handle_operator_status(args);
 
+		/*First pipe command (first pipe list)*/
+		else if (!found_pipe && next && !_strcmp(next->command[0], "|"))
+		{
+			pipe(pipe_fd);
+			args->path = get_path(args->commands->command[0], args);
+
+			fork_command(args, NULL, pipe_fd);
+			prev_fd[0] = pipe_fd[0];
+			found_pipe = 1;
+			args->commands = next->next;
+		}
+
+		/*middle pipe command (command has pipe before and after it)*/
+		else if (found_pipe && next && !_strcmp(next->command[0], "|"))
+		{
+			pipe(pipe_fd);
+			args->path = get_path(args->commands->command[0], args);
+			fork_command(args, prev_fd, pipe_fd);
+			prev_fd[0] = pipe_fd[0];
+			args->commands = next->next;
+		}
+
+		/*Command has a pipe before and redirection after */
+		else if (found_pipe && next && redirction > 1)
+		{
+			args->path = get_path(args->commands->command[0], args);
+			r_fd[1] = open_file(redirction, next->next->command[0]);
+			fork_command(args, prev_fd, r_fd);
+			prev_fd[0] = r_fd[0];
+
+			if (next->next->next)
+				args->commands = next->next->next;
+		}
+		/*command has pipe after it and redirection before it*/
+		else if (redirction == 1 && next && next->next && next->next->next
+		 && !_strcmp(next->next->next->command[0], "|"))
+		{
+			pipe(pipe_fd);
+			args->path = get_path(args->commands->command[0], args);
+			r_fd[0] = open_file(redirction, next->next->command[0]);
+
+			fork_command(args, r_fd, pipe_fd);
+			prev_fd[0] = pipe_fd[0];
+			found_pipe = 1;
+			if (next->next->next->next)
+				args->commands = next->next->next->next;
+		}
+		/*last pipe command (command has just pipe before it)*/
+		else if (found_pipe)
+		{
+			args->path = get_path(args->commands->command[0], args);
+			fork_command(args, prev_fd, NULL);
+			found_pipe = 0;
+			args->commands = next;
+		}
+
+		/*Handle redirections*/
+		else if (next && is_redirection(next->command[0]))
+		{
+			redirction = is_redirection(next->command[0]);
+
+			if (redirction != 1 && next->next)
+			{
+				r_fd[1] = open_file(redirction, next->next->command[0]);
+
+				args->path = get_path(args->commands->command[0], args);
+				fork_command(args, NULL, r_fd);
+			}
+
+			else if (redirction == 1 && next->next)
+			{
+
+				r_fd[0] = open_file(redirction, next->next->command[0]);
+
+				args->path = get_path(args->commands->command[0], args);
+				fork_command(args, r_fd, NULL);
+			}
+
+			args->commands = next->next->next;
+		}
+
 		else
 		{
 			builtin_function = is_built_in(args);
 			if (builtin_function != NULL)
 				builtin_function(args);
+
 			else if (!is_logical(args->commands->command[0]))
 			{
 				check_alias(args);
@@ -162,7 +312,7 @@ void execute(ALL *args)
 				if (!args->path)
 					print_error(args);
 				else
-					fork_command(args);
+					fork_command(args, NULL, NULL);
 			}
 			args->commands = args->commands->next;
 		}
@@ -193,9 +343,9 @@ int main(int ac, char **av)
 	{
 		print_error(&args);
 		free_2D(args.envrion_cpy);
+		free_history(&args);
 		exit(ERROR_NOT_FOUND);
 	}
-
 	while (1)
 	{
 
@@ -203,9 +353,12 @@ int main(int ac, char **av)
 			write(STDOUT_FILENO, args.prompt, _strlen(args.prompt));
 
 		args.line = NULL;
-		read_chars = _getline(&args.line, &size, args.fd);
 		args.line_number++;
 
+		signal(SIGINT, sigint_handler);
+		read_chars = _getline(&args.line, &size, args.fd);
+
+		/*EOF: enf of file or Ctrl + D*/
 		if (read_chars == -1)
 		{
 			free(args.line);
@@ -214,9 +367,11 @@ int main(int ac, char **av)
 
 			free_2D(args.envrion_cpy);
 			free_aliases_list(&args);
+			free_history(&args);
 			exit(args.status);
 		}
 
+		/*Empty line*/
 		if (read_chars == 1 && args.line[0] == '\n')
 		{
 			free(args.line);
@@ -232,6 +387,8 @@ int main(int ac, char **av)
 
 	free_aliases_list(&args);
 	free_2D(args.envrion_cpy);
+	free_history(&args);
+
 	if (args.fd != STDIN_FILENO)
 		close(args.fd);
 

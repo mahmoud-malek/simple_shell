@@ -8,11 +8,21 @@
 
 int logical_sep(char *line)
 {
+	if ((*line == '2' && *(line + 1) == '>' &&
+		 *(line + 2) == '&' && *(line + 3) == '1'))
+		return (4);
+
+	else if ((*line == '2' && *(line + 1) == '>' && *(line + 2) == '>'))
+		return (3);
+
 	if ((*line == '|' && *(line + 1) == '|') ||
-		(*line == '&' && *(line + 1) == '&'))
+		(*line == '&' && *(line + 1) == '&') ||
+		(*line == '>' && *(line + 1) == '>') ||
+		(*line == '2' && *(line + 1) == '>') ||
+		(*line == '&' && *(line + 1) == '>'))
 		return (2);
 
-	else if (*line == ';')
+	else if (*line == ';' || *line == '|' || *line == '<' || *line == '>')
 		return (1);
 
 	return (0);
