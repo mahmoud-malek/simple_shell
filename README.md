@@ -8,13 +8,13 @@ It is simliar to `sh` or `bash` shells
 the main page is a file contain details how this shell works
 to see the full the manual-page
 
-```shell
+```bash
 $ man ./man_1_simple_shell
 ```
 
 ## How To Use
 
-```shell
+```bash
 git clone https://github.com/mahmoud-malek/simple_shell.git
 or
 getw https://github.com/mahmoud-malek/simple_shell/archive/refs/heads/main.zip
@@ -24,14 +24,14 @@ and then, cd simple_shell
 
 ### Compilation
 
-```shell
+```bash
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 
 ```
 
 ### Run
 
-```shell
+```bash
 ./hsh
 
 Eaxmples:
@@ -60,8 +60,7 @@ drwx------ 3 root   root   4096 Dec  5 12:07 systemd-private-062a0eca7f2a4434973
 | setenv   | sets an environment variable    |
 | unsetenv | unset an environment variable   |
 | env      | print all environment variables |
-
----
+| history  | print, delete Histroy           |
 
 ## List of features
 
@@ -71,6 +70,13 @@ drwx------ 3 root   root   4096 Dec  5 12:07 systemd-private-062a0eca7f2a4434973
 - handle File as input
 - handle (&&), (||), ( ; )
 - Handle command lines with arguments
+- Handle interruption signal (SIGINT, ctrl + c)
+- handle pipes
+- handle basic redirections
+- handle combination of pipes and redirections (not work in all cases nor edge cases)
+
+> Note: in pipes and redirctions there are no error handling, not support edge cases.
+> It may have couple of issues, So, be careful when using redirections and pipes,
 
 ## Flowchart <img src="https://cdn-icons-png.flaticon.com/128/3051/3051633.png" width=40 align=center>
 
