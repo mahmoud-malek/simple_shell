@@ -16,6 +16,8 @@
 This is a simple shell that emulates the basic functionality of sh and supports built-in commands and some features
 It is simliar to `sh`.
 
+* USE AT YOUR OWN RISK
+
 ## Man-page <img src="https://cdn-icons-png.flaticon.com/128/781/781103.png" width=40 align=center>
 
 the main page is a file contain details how this shell works
