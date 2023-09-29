@@ -1,5 +1,18 @@
-# UNIX command interpreter (Simple Shell) <img src="https://cdn-icons-png.flaticon.com/512/4792/4792314.png" width=45 align=center>
+<div align="center">
+  <h1> UNIX command interpreter (Simple Shell) <img src="https://cdn-icons-png.flaticon.com/512/4792/4792314.png" width=45 align=center> </h1>
+  <h5>
+    <a href="https://github.com/mahmoud-malek/simple_shell#man-page-">Man Page</a>
+    ·
+    <a href="https://github.com/mahmoud-malek/simple_shell#compilation">Compilation</a>
+    ·
+    <a href="https://github.com/mahmoud-malek/simple_shell#list-of-supported-built-in-commands">Supported Commands</a>
+    ·
+    <a href="https://github.com/mahmoud-malek/simple_shell#how-to-use">How To Use</a>
+  </h5>
+  <img src="https://img.shields.io/github/repo-size/mahmoud-malek/simple_shell">
+</div>
 
+## Description
 This is a simple shell that emulates the basic functionality of sh and supports built-in commands and some features
 It is simliar to `sh`.
 
