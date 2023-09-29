@@ -1,0 +1,52 @@
+.TH HSH 1 20-09-2023 HSH\ 1 Simple\ Shell\ Manual
+
+.SH NAME
+hsh - command interpreter (simple shell)
+
+.SH SYNOPSIS
+Run ./hsh [command] [argument] for interactive mode and echo "[command] [argument]" | ./hsh for non-interactive mode.
+
+.SH DESCRIPTION
+This is a simple shell that emulates the basic functionality of sh,
+.TP
+and supports built-in commands and some features It is simliar to sh or bash shells
+
+.SH COMPILATION
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 \*.c -o hsh
+
+.SH MODES
+The shell can be used in interactive or non-interactive mode. The interactive mode is how the shell is normally used, the executable file is run and we can write commands. In the non-interactive mode you pass the command to the executable file with a pipe operator. In the "EXAMPLES" section you can see how to use them.
+
+.SH EXAMPLES
+
+- Interactive mode:
+  .TP
+  \r$ ./hsh
+  .TP
+  \r\rhsh$ ls -l
+  .TP
+- Non-interactive mode:
+  .TP
+  \recho "ls -l" | ./hsh
+
+.SH SUPPORTED FUNCTIONALITY
+#comments
+.TP
+variable replacement
+.TP
+File as input
+.TP
+(&&), (||), ( ; )
+.TP
+command lines with arguments
+.TP
+interruption signal (SIGINT, ctrl + c)
+.TP
+pipes
+.TP
+basic redirections
+.TP
+combination of pipes and redirections (not work in all cases nor edge cases)
+
+.SH AUTHORS
+Mahmoud Malek @mahmoud-malek

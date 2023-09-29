@@ -1,7 +1,7 @@
 # UNIX command interpreter (Simple Shell) <img src="https://cdn-icons-png.flaticon.com/512/4792/4792314.png" width=45 align=center>
 
 This is a simple shell that emulates the basic functionality of sh and supports built-in commands and some features
-It is simliar to `sh` or `bash` shells
+It is simliar to `sh`.
 
 ## Man-page <img src="https://cdn-icons-png.flaticon.com/128/781/781103.png" width=40 align=center>
 
@@ -9,7 +9,7 @@ the main page is a file contain details how this shell works
 to see the full the manual-page
 
 ```bash
-$ man ./man_1_simple_shell
+$ man ./man_1_hsh
 ```
 
 ## How To Use
@@ -81,6 +81,42 @@ drwx------ 3 root   root   4096 Dec  5 12:07 systemd-private-062a0eca7f2a4434973
 ## Flowchart <img src="https://cdn-icons-png.flaticon.com/128/3051/3051633.png" width=40 align=center>
 
 <img src="https://i.ibb.co/42YWY5r/Simple-Shell-1.png" alt="Simple-Shell-flowchart" border="0">
+
+## List of allowed functions and system calls in this project
+
+```bash
+access (man 2 access)
+chdir (man 2 chdir)
+close (man 2 close)
+closedir (man 3 closedir)
+execve (man 2 execve)
+exit (man 3 exit)
+_exit (man 2 _exit)
+fflush (man 3 fflush)
+fork (man 2 fork)
+free (man 3 free)
+getcwd (man 3 getcwd)
+getline (man 3 getline)
+getpid (man 2 getpid)
+isatty (man 3 isatty)
+kill (man 2 kill)
+malloc (man 3 malloc)
+open (man 2 open)
+opendir (man 3 opendir)
+perror (man 3 perror)
+read (man 2 read)
+readdir (man 3 readdir)
+signal (man 2 signal)
+stat (__xstat) (man 2 stat)
+lstat (__lxstat) (man 2 lstat)
+fstat (__fxstat) (man 2 fstat)
+strtok (man 3 strtok)
+wait (man 2 wait)
+waitpid (man 2 waitpid)
+wait3 (man 2 wait3)
+wait4 (man 2 wait4)
+write (man 2 write)
+```
 
 ## 🔗 Useful Links
 
