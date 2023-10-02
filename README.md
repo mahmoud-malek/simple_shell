@@ -133,8 +133,9 @@ wait4 (man 2 wait4)
 write (man 2 write)
 ```
 
-## 🔗 Useful Links
+## 🔗 [HOW TO WRITE YOUR OWN SHELL](https://medium.com/@mahmoud-malek/unix-command-line-interpreter-simple-shell-3af4755e7df9)
 
+## 🔗 Useful Links
 [Differenece between sh and bash](https://stackoverflow.com/questions/5725296/difference-between-sh-and-bash)
 
 [Shell Command Language](https://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html)
